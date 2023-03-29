@@ -16,13 +16,8 @@ pipeline {
 
                     echo "copying ec2 key to ansible server..."
 
-                    }
-                    
-                }
+                }                   
             }
         }
-
-    
     }
-
 }
