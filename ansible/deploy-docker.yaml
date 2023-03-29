@@ -1,0 +1,110 @@
+---
+- name: Wait for ssh port to open
+  hosts: aws_ec2
+  gather_facts: false
+  tasks:
+    - name: wait for port 22
+      wait_for:
+        port: 22
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        delay: 10
+        timeout: 100
+        search_regex: OpenSSH
+      vars:
+        ansible_connection: local
+        #ansible_python_interpreter: /usr/bin/python
+
+
+
+- name: Install python3 and docker
+  vars_files:
+    - project-values
+  #hosts: "{{docker_machine}}"
+  hosts: aws_ec2
+  become: yes
+  gather_facts: false
+  tasks: 
+
+    - name: install python3 and docker
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      yum:
+        name: 
+          - python3
+          - docker
+        update_cache: yes
+        state: present
+
+
+- name: Download install and configure docker-compose
+  vars_files:
+    - project-values
+  #hosts: "{{docker_machine}}"
+  hosts: aws_ec2
+  become: yes
+  become_user: root
+  tasks:
+
+    - name: download docker compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: +x
+
+    - name: Start docker deamon
+      systemd: 
+        name: docker
+        state: started    
+
+    - name: create docker user and add it to docker group
+      user:
+        name: dockeruser
+        groups: docker
+        append: yes    
+
+    - name: recconect to server session
+      meta: reset_connection
+
+    - name: install required python packages
+      pip:
+        name: 
+        - docker
+        - docker-compose
+
+
+- name: Pull and deploy my-app and mysql
+  vars_files:
+    - project-values
+  #hosts: "{{docker_machine}}"
+  hosts: aws_ec2
+  become: yes
+  become_user: dockeruser
+  #vars_prompt:
+  #  - name: docker_username
+  #    prompt: Enter docker username
+  #  - name: docker_password
+  #    prompt: Enter docker password
+  tasks:
+
+    - name: log into docker hub
+      docker_login:
+        username: "{{docker_user}}"
+        password: "{{docker_pass}}"
+
+    - name: copy docker-compose to docker server
+      copy:
+        src: ./docker-compose.yaml
+        dest: /home/dockeruser
+        owner: dockeruser
+        group: docker
+        mode: '0740'
+
+    - name: run docker compose
+      docker_compose:
+        project_src: /home/dockeruser
+        state: present
+      
+
+    
+
+  
