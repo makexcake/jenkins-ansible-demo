@@ -18,6 +18,7 @@ pipeline {
             steps {
 
                 script {
+
                     echo "copying project files to ansible server..."
                     sshagent(['ansible-key']) {
                         //copy project files to the ansible server
@@ -25,6 +26,10 @@ pipeline {
                     }
 
                     echo "copying ec2 key to ansible server..."
+                    // copy ec2 server key to ansible server
+                    withCredentials([sshUserPrivateKey(credentialsId: "ec2-key", keyFileVariable: 'keyFile', usernameVariable: 'user')]) {
+                        sh "scp ${keyfile} root@${ANSIBLE_SERVER}:/root/MyKeyPair.pem"
+                    }
 
                 }                   
             }
