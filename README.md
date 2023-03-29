@@ -4,7 +4,7 @@ The following repo is a demo project written by @makexcake while completing Tech
 ## Description
 The project requires two servers, one for the jenkins machine and the other is ansible dedicated server.
 
-Terraform folder include terraform file for provisioning an ec2 instance on which the pipeline will configure docker and setting up java-mysql app from the exercises.
+Terraform folder includes terraform file for provisioning an ec2 instance on which the pipeline will configure docker and setting up java-mysql app from the exercises.
 
 The pipeline includes the following steps: 
 * Copying keys and project files to the ansible server
