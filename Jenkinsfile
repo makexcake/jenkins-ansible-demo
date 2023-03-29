@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_SERVER = 164.90.217.29
+        ANSIBLE_SERVER = "164.90.217.29"
     }
     stages {
 
@@ -15,7 +15,7 @@ pipeline {
                     echo "copying project files to ansible server..."
 
                     echo "copying ec2 key to ansible server..."
-                    
+
                     }
                     
                 }
