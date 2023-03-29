@@ -21,7 +21,7 @@ pipeline {
                     echo "copying project files to ansible server..."
                     sshagent(['ansible-key']) {
                         //copy project files to the ansible server
-                        sh 'scp -o StrictHostChecking=no ansible/* root@$ANSIBLE_SERVER:/root'
+                        sh "scp -o StrictHostChecking=no ansible/* root@${ANSIBLE_SERVER}:/root"
                     }
 
                     echo "copying ec2 key to ansible server..."
