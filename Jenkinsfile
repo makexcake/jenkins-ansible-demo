@@ -4,6 +4,8 @@ pipeline {
     The following must be configured on jenkins server:
     - jenkins plugin: ssh agent
     - jenkins plugin: ssh pipeline steps
+    - log into aws account on ansible server
+    - 
     */
 
     agent any
@@ -30,7 +32,6 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: "ec2-key", keyFileVariable: 'keyFile', usernameVariable: 'user')]) {
                         sh "scp ${keyfile} root@${ANSIBLE_SERVER}:/root/MyKeyPair.pem"
                     }
-
                 }                   
             }
         }
