@@ -1,5 +1,11 @@
 pipeline {
 
+    /*
+    The following must be configured on jenkins server:
+    - jenkins plugin: ssh agent
+    - jenkins plugin: ssh pipeline steps
+    */
+
     agent any
 
     environment {
@@ -13,6 +19,10 @@ pipeline {
 
                 script {
                     echo "copying project files to ansible server..."
+                    sshagent(['ansible-key']) {
+                        //copy project files to the ansible server
+                        sh 'scp -o StrictHostChecking=no ansible/* root@$ANSIBLE_SERVER:/root'
+                    }
 
                     echo "copying ec2 key to ansible server..."
 
