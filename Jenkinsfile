@@ -34,7 +34,7 @@ pipeline {
                 }                   
             }
         }
-        
+        // execute the playbook
         stage("Execute ansible playbook") {
             steps {
 
@@ -49,6 +49,7 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: "ansible-key", keyFileVariable: 'keyFile', usernameVariable: 'user')]) {
                         remote.user = user
                         remote.identityFile = keyfile
+                        //pass the docker password through env var to avoid writing it in values file
                         sshCommand remote: remote, command: '''ansible-playbook deploy-docker.yaml -e docker_pass=${DOCKER_PASS}'''
                     }                    
                 }
