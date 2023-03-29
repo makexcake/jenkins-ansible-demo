@@ -35,5 +35,21 @@ pipeline {
                 }                   
             }
         }
+
+        stage("Execute ansible playbook") {
+            steps {
+
+                script {
+                    echo "executing ansible playbook..."
+
+                    def remote = [:]
+                    remote.name = "ansible-server"
+                    remote.host = env.ANSIBLE_SERVER
+                    remote.allowAnyHosts = true
+
+                    
+                }
+            }            
+        }
     }
 }
