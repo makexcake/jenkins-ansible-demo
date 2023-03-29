@@ -34,7 +34,7 @@ pipeline {
                 }                   
             }
         }
-
+        
         stage("Execute ansible playbook") {
             steps {
 
