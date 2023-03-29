@@ -2,10 +2,9 @@ pipeline {
 
     /*
     The following must be configured on jenkins server:
-    - jenkins plugin: ssh agent
-    - jenkins plugin: ssh pipeline steps
+    - jenkins plugins: ssh agent, ssh pipeline steps
     - log into aws account on ansible server
-    - 
+    - set docker password as env var DOCKER_PASS
     */
 
     agent any
@@ -47,7 +46,11 @@ pipeline {
                     remote.host = env.ANSIBLE_SERVER
                     remote.allowAnyHosts = true
 
-                    
+                    withCredentials([sshUserPrivateKey(credentialsId: "ansible-key", keyFileVariable: 'keyFile', usernameVariable: 'user')]) {
+                        remote.user = user
+                        remote.identityFile = keyfile
+                        sshCommand remote: remote, command: '''ansible-playbook deploy-docker.yaml -e docker_pass=${DOCKER_PASS}'''
+                    }                    
                 }
             }            
         }
